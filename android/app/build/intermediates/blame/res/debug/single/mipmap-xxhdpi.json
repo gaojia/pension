@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/Users/project/Pension/android/app/build/intermediates/res/merged/debug/mipmap-xxhdpi/ic_launcher.png",
+        "source": "/Users/project/Pension/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/project/Pension/android/app/build/intermediates/res/merged/debug/mipmap-xxhdpi/launcher.png",
+        "source": "/Users/project/Pension/android/app/src/main/res/mipmap-xxhdpi/launcher.png"
+    },
+    {
+        "merged": "/Users/project/WTS/WTS/android/app/build/intermediates/res/merged/debug/mipmap-xxhdpi/ic_launcher.png",
+        "source": "/Users/project/WTS/WTS/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+    }
+]

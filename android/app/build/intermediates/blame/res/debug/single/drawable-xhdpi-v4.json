@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/project/WTS/WTS/android/app/build/intermediates/res/merged/debug/drawable-xhdpi-v4/ic_launcher.png",
+        "source": "/Users/project/WTS/WTS/android/app/build/intermediates/exploded-aar/wts/jpush-react-native/unspecified/res/drawable-xhdpi-v4/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/project/Pension/android/app/build/intermediates/res/merged/debug/drawable-xhdpi-v4/ic_launcher.png",
+        "source": "/Users/project/Pension/android/app/build/intermediates/exploded-aar/wts/jpush-react-native/unspecified/res/drawable-xhdpi-v4/ic_launcher.png"
+    }
+]
