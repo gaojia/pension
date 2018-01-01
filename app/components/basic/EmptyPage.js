@@ -3,7 +3,8 @@
  * 2017/5/12
  * 作者：年小宁
  */
-import React, {PropTypes} from "react";
+import React from "react";
+import PropTypes from 'prop-types';
 import {View, Image, StyleSheet, Text} from "react-native";
 import Images from "../../common/resource/Image";
 import StyleVariable from "../../style/StyleVariable";

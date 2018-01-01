@@ -3,7 +3,7 @@
  * 2017/4/27 0027
  * 作者：高佳
  */
-var OtherConfig = {
+let OtherConfig = {
     //验证码发送间隔
     verifyCodeTime: 60,
     //点击触发颜色

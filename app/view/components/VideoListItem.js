@@ -3,7 +3,8 @@
  * 2017/7/3
  * 作者：年小宁
  */
-import React, {Component, PropTypes, PureComponent} from "react";
+import React, {Component, PureComponent} from "react";
+import PropTypes from 'prop-types';
 import {Text, View, StyleSheet, Image, Linking,TouchableHighlight} from "react-native";
 import Images from "../../common/resource/Image";
 import Adapter from "../../common/function/AdapterUtil";

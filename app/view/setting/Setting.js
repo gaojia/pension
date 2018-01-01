@@ -12,10 +12,12 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	TextInput,
+    ScrollView,
 } from 'react-native';
 import BaseComponent from "../../common/BaseComponent";
-import BaseButton from "../../components/basic/BaseButton";
-import StyleVariable from '../../style/StyleVariable'
+import StyleVariable from '../../style/StyleVariable';
+import BlockTitle from '../../components/basic/BlockTitle';
+import RowSplitLine from '../../components/basic/RowSplitLine';
 
 export default class Setting extends BaseComponent {
 	constructor(props) {
@@ -28,47 +30,37 @@ export default class Setting extends BaseComponent {
 	render() {
 		return (
 			<View style={styles.container}>
-				<StatusBar
-					hidden={false}
-					animated={false}
-				/>
-				<View style={styles.headerContainer} >
-					<Image style={styles.imgStyle}
-						   source={require('../../images/logo_name.png')}
-						   resizeMode='contain'
-					/>
-				</View>
-
-				<View style={styles.subContainer}>
-					<BaseButton
-						style={styles.rowContainer}
-						textStyle={{color:this.color.textPrimary,fontSize:StyleVariable.fontSize.someBig,paddingLeft:5}}
-						text={this.strings.feedback}
-						imgSource={require('../../images/suggest.png')}
-						onPress = {()=>this.toast('意见反馈')}
-						textPosition = 'right'
-					/>
-					<View style={{height:1,backgroundColor:this.color.divider}} />
-					<BaseButton
-						style={styles.rowContainer}
-						textStyle={{color:this.color.textPrimary,fontSize:StyleVariable.fontSize.someBig,paddingLeft:5}}
-						text={this.strings.aboutUs}
-						imgSource={require('../../images/i.png')}
-						onPress = {()=>this.toast('关于我们')}
-						textPosition = 'right'
-					/>
-					<View style={{flex:1}} />
-					<BaseButton
-						style={[styles.logoutStyle]}
-						textStyle={{color:'white',fontSize:StyleVariable.fontSize.someBig}}
-						text={this.strings.logout}
-						onPress = {()=>this._onLogout()}
-					/>
-					<View style={{alignItems:'center',marginBottom:20,marginTop:20}}>
-						<Text style={{fontSize:StyleVariable.fontSize.small,color:StyleVariable.color.textTertiary}}>
-							中交天津航道局有限公司
-						</Text>
+				<ScrollView>
+					<View style={styles.headerContainer} >
+						<Image style={styles.imgStyle}
+							   source={require('../../images/pension_logo.png')}
+							   resizeMode='contain'
+						/>
 					</View>
+					<View style={styles.subContainer}>
+						<BlockTitle
+							title={this.strings.areaSetting}
+							leftImage={this.images.areaSetting.source}
+							onPress={() => {this.router.jumpToPage('regionSet')}}
+							iconleftmarginLeft={16}
+							haveMore={true}
+							imgStyle={{width:15,height:15}}
+						/>
+						<RowSplitLine/>
+						<BlockTitle
+							title={this.strings.aboutUs}
+							leftImage={this.images.aboutUs.source}
+							onPress={() => {this.toast('养老')}}
+							iconleftmarginLeft={16}
+							haveMore={true}
+							imgStyle={{width:15,height:15}}
+						/>
+					</View>
+				</ScrollView>
+				<View style={{alignItems:'center',marginBottom:20,marginTop:20}}>
+					<Text style={{fontSize:StyleVariable.fontSize.small,color:StyleVariable.color.textTertiary}}>
+						养老有限公司
+					</Text>
 				</View>
 			</View>
 		)
@@ -81,7 +73,7 @@ export default class Setting extends BaseComponent {
 var styles = StyleSheet.create({
 	container:{
 		flex:1,
-		// backgroundColor:StyleVariable.color.background,
+		backgroundColor:StyleVariable.color.background,
 	},
 	headerContainer: {
 		// backgroundColor:'blue',
@@ -91,14 +83,9 @@ var styles = StyleSheet.create({
 		paddingBottom:20,
 		height:220,
 		alignItems:'center',
-		backgroundColor:StyleVariable.color.background,
 	},
 	imgStyle: {
 		flex:1,
-		// marginLeft:40,
-		// marginRight:40,
-		// height:180,
-
 	},
 	subContainer:{
 		flex:1,

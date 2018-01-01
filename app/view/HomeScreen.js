@@ -10,46 +10,89 @@ import {
 	Text,
 	Image,
 	Modal,
+    Animated,
 	FlatList,
 	StatusBar,
+    Dimensions,
 	StyleSheet,
+    PixelRatio,
+    ImageBackground,
 	TouchableOpacity,
+	InteractionManager,
 } from 'react-native';
 import BaseComponent from "../common/BaseComponent";
-import { WebView } from 'react-native-webview-messaging/WebView';
 import OtherConfig from '../config/OtherConfig'
-import BaseButton from "../components/basic/BaseButton";
-import JPushModule from 'jpush-react-native';
-import PushNotification from 'react-native-push-notification'
+import PushNotification from 'react-native-push-notification';
+import MenuBtn from './components/MenuBtn';
+import StyleVariable from '../style/StyleVariable';
+import Icon from 'react-native-vector-icons/Ionicons'
+import Orientation from 'react-native-orientation';
+import Speech from 'react-native-speech';
+import DeviceInfo from 'react-native-device-info';
+
+let houseWarnDataSource = [{
+    id: 1,
+    type:2,
+    content:'警报解除 2017-12-12 00:00:00',
+},{
+    id: 2,
+    type:1,
+    content:'警报呼叫 2017-12-12 00:00:00',
+},{
+    id: 3,
+    type:2,
+    content:'警报解除 2017-12-12 00:00:00',
+},{
+    id: 4,
+    type:1,
+    content:'警报呼叫 2017-12-12 00:00:00',
+}];
+
 export default class HomeScreen extends BaseComponent {
 	constructor(props) {
 		super(props);
 		this.state= {
 			showMore: false,
 			showTypeList:false,
-			shipTypeSource: [{
-				name:'全部',
-				selected:true,
-			},{
-				name:'运沙船',
-				selected:false,
-			},{
-				name:'抛石船',
-				selected:false,
-			},{
-				name:'其它',
-				selected:false,
-			}],
+			warnSource: [
+				{
+					id: 1,
+					content:'1号楼，3层，302室，有警报呼叫，请及时处理！',
+				},
+				{
+                    id: 2,
+                    content:'2号楼，2层，202室，有警报呼叫，请及时处理！',
+				},
+				{
+                    id: 3,
+                    content:'3号楼，1层，102室，有警报呼叫，请及时处理！',
+				}
+			],
+            houseWarnRecordSource: [],
+            rightDistance: new Animated.Value(-203)
 		};
-		this.lastIndex = 0; //已选中的船只类型（0对应全部）
-		this._onFlatItemAction = this._onFlatItemAction.bind(this);
 	}
 
 	componentDidMount() {
-		JPushModule.notifyJSDidLoad(()=>{});
-		this.webview.messagesChannel.on('text', text => console.log(text));
-		this.webview.messagesChannel.on('json', json => console.log(json));
-		this.webview.messagesChannel.on('custom-event-from-webview', eventData => console.log(eventData));
+        InteractionManager.runAfterInteractions(() => {
+            Orientation.lockToLandscape();
+			this._getWarnMsg();
+		});
+
+        console.log('getDeviceId:'+DeviceInfo.getDeviceId())
+        console.log('getDeviceName:'+DeviceInfo.getDeviceName())
+        //console.log('getMACAddress:'+DeviceInfo.getMACAddress().then((data) => console.log(data)))
+        console.log('getUniqueID:'+DeviceInfo.getUniqueID())
+		// JPushModule.notifyJSDidLoad(()=>{});
+		// this.webview.messagesChannel.on('text', text => console.log(text));
+		// this.webview.messagesChannel.on('json', json => console.log(json));
+		// this.webview.messagesChannel.on('custom-event-from-webview', eventData => console.log(eventData));
+	}
+
+
+
+	componentWillMount() {
+
 	}
 
 	sendMessageToWebView = () => {
@@ -67,172 +110,154 @@ export default class HomeScreen extends BaseComponent {
 	render() {
 		return (
 			<View style={{flex: 1}}>
-				<WebView
-					ref={ webview => {
-						this.webview = webview;
-					}}
-					source={{uri: 'http://salody.cc:3002/'}}
-					style={{flex: 1}}
-					bounces={false}
-				/>
-				<View style={styles.LTContainer}>
-					{this._renderImgBtn('video',require('../images/video.png'))}
-					{this._renderImgBtn('list',require('../images/list.png'))}
-					{this._renderImgBtn('detail',require('../images/ship_icon.png'))}
-					{this._renderImgBtn('type',require('../images/ship_menu.png'))}
-					{this._renderImgBtn('path',require('../images/path.png'))}
-				</View>
-				<View style={styles.RTContainer}>
-					{this._renderImgBtn('message',require('../images/message.png'))}
-				</View>
-				<View style={styles.RBMenuContainer}>
-					{this._renderRightMenu()}
-				</View>
-				<View style={styles.RBContainer}>
-					{this._renderImgBtn('position',require('../images/position.png'))}
-				</View>
-				<View style={styles.LBContainer}>
-					{this._renderImgBtn('dotMore',require('../images/dot_more.png'))}
-				</View>
-				{this._renderShipTypeList()}
+				{/*<WebView*/}
+					{/*ref={ webview => {*/}
+						{/*this.webview = webview;*/}
+					{/*}}*/}
+					{/*source={{uri: 'http://salody.cc:3002/'}}*/}
+					{/*style={{flex: 1}}*/}
+					{/*bounces={false}*/}
+				{/*/>*/}
+				{/*<Image source={this.images.default_cover.source} style={{width:200,height:200}}/>*/}
+				<ImageBackground source = {this.images.bgImage.source} resizeMode='stretch' style={{flex:1}}>
+					<View style={styles.flatContainer}>
+						<FlatList
+							style={styles.flatList}
+							data={this.state.warnSource}
+							renderItem={this._renderItem}
+							keyExtractor={(item, index) => item.id}
+						/>
+
+					</View>
+					<View style={styles.LTContainer}>
+                        {this._renderImgBtn('taskList',this.images.list.source)}
+					</View>
+					<View style={styles.RTContainer}>
+                        {this._renderImgBtn('message',this.images.message.source)}
+                        {this._renderImgBtn('setting',this.images.setting.source)}
+					</View>
+					<Animated.View style={[styles.recorderContainer,{right: this.state.rightDistance}]}>
+						{/*<FlatList*/}
+							{/*style={[styles.flatList,{top:20}]}*/}
+							{/*data={this.state.houseWarnRecordSource}*/}
+							{/*renderItem={this._renderHouseItem}*/}
+							{/*keyExtractor={(item, index) => item.id}*/}
+						{/*/>*/}
+						{
+							this.renderListView({
+                                style:{flex:1,marginTop:20},
+                                footerTextStyle: {fontSize:10},
+                                data: this.state.houseWarnRecordSource,
+                                renderItem: (rowData, row, rowID) => this._renderHouseItem(rowData, row, rowID),
+                                onHeaderRefresh: () => this._onRequestListWithReload(true),
+                                onFooterRefresh: () => this._onRequestListWithReload(false)
+							})
+						}
+					</Animated.View>
+
+				</ImageBackground>
 			</View>
 		)
 	}
-	_renderRightMenu = ()=>{
-		if(this.state.showMore){
-			return(
-				<View style={styles.rightContainer} >
-					{this._renderImgBtn('check',require('../images/check.png'))}
-					{this._renderImgBtn('typhoon',require('../images/tyhoon.png'))}
-					{this._renderImgBtn('files',require('../images/files.png'))}
-					{this._renderImgBtn('setting',require('../images/set.png'))}
-				</View>
-			)
-		}else{
-			null;
+
+	_getWarnMsg = () => {
+		this.request.sendGet({
+			url: this.apis.getAllWarnMsgByMac+`?macId=${this.mac}`,
+			success: (data) => {
+				let i = 0;
+				this.state.warnSource = [];
+				data.message.alertsInfo.map((item) => {
+					this.state.warnSource.push({
+						id: i,
+						content: item,
+						onPress: () => {this.toast('切换房间')}
+					});
+					i++;
+                    // this._startSpeak(item);
+				});
+				this.setState({});
+			},
+			error: () => {
+
+			}
+		})
+	};
+
+	_getRoomWarnMsg = () => {
+        this.request.sendGet({
+            url: this.apis.getAllWarnMsgByRoomId+`?roomId=${this.roomId}`,
+            success: (data) => {
+                this.setState({
+                    houseWarnRecordSource:houseWarnDataSource
+				});
+                this.listView && this.listView.endRefreshing(this.RefreshState.NoMoreData);
+            },
+            error: () => {
+
+            }
+        })
+	};
+
+    _onRequestListWithReload = (isPullDownRefresh) => {
+        if (isPullDownRefresh) {
+            this.state.houseWarnRecordSource = [];
+            this.state.pageIndex = 1;
+        } else {
+            this.state.pageIndex++;
+        }
+        this._getRoomWarnMsg();
+    };
+
+	_startAnimation = () => {
+		if(this.state.rightDistance._value > 0){
+            this.state.rightDistance.setValue(-203);
+		} else {
+            Animated.spring(                            // 随时间变化而执行的动画类型
+                this.state.rightDistance,                      // 动画中的变量值
+                {
+                    toValue: 3,
+                }
+            ).start(() => {
+                this.listView && this.listView.startHeaderRefreshing();
+			});
 		}
-	}
-	_renderShipTypeList = () =>{
-		if (this.state.showTypeList){
-			return(
-				<Modal style={{flex:1}}
-					   transparent={true}
-						visible={this.state.showTypeList}
-					   onRequestClose={()=>{this.toast('onRequestClose')}}
-				>
-					<TouchableOpacity style={{flex:1}}
-									  onPress={()=>{this.setState({showTypeList:false})}}
-					>
-						<FlatList
-							style={styles.flatList}
-							data={this.state.shipTypeSource}
-							extraData={this.state}
-							keyExtractor={this._keyExtractor}
-							renderItem={this._renderListItem}
-							ItemSeparatorComponent={this._renderSeparator}
-						/>
-					</TouchableOpacity>
-				</Modal>
-			)
-		}else {
-			null;
-		}
-	}
-	_renderListItem = (item) =>{
-		let data = item.item;
+	};
+
+	_speakContent = (dataSource) => {
+
+	};
+
+	_startSpeak = (data) => {
+		return Speech.speak({
+            text: data,
+            voice: 'zh'
+        });
+	};
+
+	_renderImgBtn = (btnType, source)=>{
 		return(
-			<TouchableOpacity key={item.id} style={{height:30,justifyContent:'center',flexDirection:'row'}}
-							  onPress = {()=>this._onFlatItemAction(item)}
-			>
-				<View style={{marginLeft:10,justifyContent:'center',width:10}}>
-					<Image
-						source={data.selected? require('../images/point_sel.png'):  require('../images/point_def.png')}
-						style={styles.itemPoint}
-					/>
-				</View>
-				<View style={{flex:1,justifyContent:'center'}}>
-					<Text style={{}}>
-						{data.name}
-					</Text>
-				</View>
-			</TouchableOpacity>
-		)
-	}
-	_renderSeparator = () =>{
-		return(
-			<View style={{height:1,backgroundColor:this.color.divider,marginLeft:10,marginRight:10}}/>
-		)
-	}
-	_keyExtractor = (item, index) => item.id;
-	_renderImgBtn =(btnType,source)=>{
-		return(
-			<BaseButton
+			<MenuBtn
 				onPress={()=>this._onImgBtnAction(btnType)}
 				imgSource={source}
 			/>
 		)
-	}
-	_onImgBtnAction = (btnType) =>{
+	};
+
+	_onImgBtnAction =  (btnType) =>{
 		// this.toast(btnType);
 		switch (btnType){
-			case 'video':{
-				//this.router.jumpToPage('video');
-				// var currentDate = new Date();
-				// JPushModule.sendLocalNotification({
-				// 	id:5,
-				// 	title:'haha',
-				// 	content:'content',
-				// 	extra:{key1:'value1',key2:'value2'},
-				// 	fireTime: currentDate.getTime() + 3000,
-				// 	badge: 8,
-				// 	sound: 'fasdfa',
-				// 	subtitle: "subtitle",
-				// });
-				this._notification();
-			}
-				break;
-			case 'list':{
-				this.router.jumpToPage('shipList');
-			}
-				break;
-			case 'detail':{
-				this.webview.send('showDetails');
-			}
-				break;
-			case 'type':{
-				this.setState({
-					showTypeList:!this.state.showTypeList,
-				})
-			}
-				break;
-			case 'path':{
-				this.webview.send('path');
-			}
-				break;
-			case 'check':{
-
-			}
-				break;
-			case 'typhoon':{
-				this.router.jumpToPage('typhoon');
-			}
-				break;
-			case 'files':{
-				this.router.jumpToPage('learningFiles');
+			case 'taskList':{
+                this._startAnimation();
+                // if(this.state.warnSource.length > 0){
+                //     this.state.warnSource.map(async (data) => {
+                //          this._startSpeak(data.content);
+                //     })
+                // }
+                // await this._startSpeak(data.content);
 			}
 				break;
 			case 'setting':{
 				this.router.jumpToPage('setting');
-			}
-				break;
-			case 'dotMore':{
-				this.setState({
-					showMore:!this.state.showMore,
-				})
-			}
-				break;
-			case 'position':{
-				this.webview.send('reset');
 			}
 				break;
 			case 'message':{
@@ -255,91 +280,96 @@ export default class HomeScreen extends BaseComponent {
 		});
 	}
 
-	_onFlatItemAction = (item) =>{
-		let data = item.item;
-		let index = item.index;
-		let selected = !data.selected;
-		if (data.name === '全部') {
-			this.webview.send(data.name);
-		} else {
-			this.webview.send(data.name + selected);
-		}
+	_renderItem = (data) => {
+		return (
+			<TouchableOpacity onPress={data.item.onPress || null}>
+				<View style={styles.warnMsgContainer}>
+					<Icon size={20} name="md-warning" color="#ff9800"/>
+					{/*<Image style={styles.warnIcon} {...this.images.i}/>*/}
+					<Text allowFontScaling={false} style={styles.warnMsg}>{data.item.content}</Text>
+				</View>
+			</TouchableOpacity>
+		)
+	}
 
-		//单选逻辑
-		let shipSource = this.state.shipTypeSource;
-		shipSource[this.lastIndex].selected = false;
-		let oldItem = shipSource[index];
-		oldItem.selected = !data.selected;
-		shipSource[index]=oldItem;
-		this.lastIndex = index;
-
-		/* 多选逻辑
-		//默认选中全部，全部包括所有类型，选中除"全部"外的类型时，"全部"为非选中状态
-		let shipSource = this.state.shipTypeSource;
-		if (index>0){
-			shipSource[0].selected = false;
-
-			let oldItem = shipSource[index];
-			oldItem.selected = !data.selected;
-			shipSource[index]=oldItem;
-		}else {
-			shipSource.forEach((item,index)=>{
-				if (index>0){
-					item.selected = false;
-				}else {
-					item.selected = true;
-				}
-			})
-		}
-		*/
-		this.setState({
-			showTypeList:false,
-			shipTypeSource:shipSource,
-		})
+    _renderHouseItem = (data) => {
+        return (
+			<View style={styles.recorderItem}>
+				<Text style={[styles.recorderText,{color:(data.item.type === 1 ? 'red' : null)}]}>{data.item.content}</Text>
+			</View>
+        )
 	}
 }
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
 	LTContainer:{
 		position: 'absolute',
 		left:OtherConfig.marginMid,
-		top:60,
+		top:OtherConfig.statusBarHeight,
 		width:50,
 	},
-	LBContainer:{
-		position:'absolute',
-		bottom:OtherConfig.marginHuge,
-		right:OtherConfig.marginMid,
-		width:50,
-	},
-	RTContainer:{
-		position:'absolute',
-		width:50,
-		top:60,
-		right:OtherConfig.marginMid
-	},
-	RBMenuContainer:{
-		position:'absolute',
-		width:50,
-		bottom:(OtherConfig.marginHuge+50+OtherConfig.marginMid),
-		right:OtherConfig.marginMid
-	},
-	RBContainer:{
-		position:'absolute',
-		bottom:OtherConfig.marginHuge,
-		left:OtherConfig.marginMid,
-		width:50,
-	},
-	flatList:{
-		position:'absolute',
-		top:60+50*3,
-		left:OtherConfig.marginMid+50+OtherConfig.marginSmall,
-		width:100,
-		backgroundColor:'white'
-	},
-	itemPoint:{
-		height:7,
-		width:7,
-	}
 
-})
+	RTContainer:{
+		flexDirection:'row',
+		position:'absolute',
+        top:OtherConfig.statusBarHeight,
+		right:OtherConfig.marginMid
+	},
+	flatContainer: {
+        flex:1,
+        top:OtherConfig.statusBarHeight,
+        justifyContent: 'center',
+        alignItems: 'center',
+	},
+	flatList: {
+		backgroundColor: 'transparent'
+	},
+	warnMsgContainer:{
+		flex:1,
+		height: 30,
+		marginTop:10,
+		padding: 5,
+		flexDirection: 'row',
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius:5,
+	},
+    warnIcon: {
+		width: 20,
+		height: 20,
+	},
+    warnMsg: {
+		fontSize: 23,
+		color: 'red',
+		marginLeft: 5
+	},
+    itemSeparator: {
+		height:10,
+		backgroundColor: 'transparent'
+	},
+	recorderContainer: {
+		top:3,
+		right:3,
+		width:200,
+		borderWidth:1/PixelRatio.get(),
+		borderRadius:3,
+		borderColor:'#ccc',
+        alignItems:'center',
+        position:'absolute',
+		backgroundColor:'#fff',
+        height:Dimensions.get('window').height-6,
+	},
+	recorderItem: {
+        alignItems:'center',
+		width:180,
+		borderWidth:1/PixelRatio.get(),
+		borderRadius:2,
+		borderColor:'#ccc',
+		marginTop:10,
+		padding:5
+	},
+	recorderText: {
+        fontSize:10
+	}
+});

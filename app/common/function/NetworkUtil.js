@@ -33,8 +33,8 @@ function postForm(param) {
                 }
             })
         } else {
-            Utils.showMessage(String.Login.zh.noNetwork);
-            param.error(String.Login.zh.noNetwork);
+            Utils.showMessage('无网络请求');
+            param.error('无网络请求');
         }
     });
 }
@@ -55,8 +55,8 @@ function post(param) {
                 }
             })
         } else {
-            Utils.showMessage(String.Login.zh.noNetwork);
-            param.error(String.Login.zh.noNetwork);
+            Utils.showMessage('无网络请求');
+            param.error('无网络请求');
         }
     });
 }
@@ -78,8 +78,8 @@ function get(param) {
                 }
             })
         } else {
-            Utils.showMessage(String.Login.zh.noNetwork);
-            param.error(String.Login.zh.noNetwork);
+            Utils.showMessage('无网络请求');
+            param.error('无网络请求');
         }
     });
 }
@@ -104,16 +104,16 @@ function refreshToken() {
 //请求错误处理
 let errorCodeHandle = (response, error) => {
     if (response.code === 404) {
-        Utils.showMessage(String.Login.zh.locationInvalid);
+        Utils.showMessage('地址无效');
     } else if(response.code === 408) {
-        Utils.showMessage(String.Login.zh.timeOut);
+        Utils.showMessage('超时');
     }
 
     error && error(response);
 };
 
 let err = (errMsg) => {
-    Utils.showMessage(String.Login.tokenInvalid);
+    Utils.showMessage('令牌失效');
     Router.loginOut(true);
 }
 

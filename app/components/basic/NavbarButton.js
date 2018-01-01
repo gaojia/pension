@@ -2,13 +2,14 @@
  * Created by Lz on 2017/4/17.
  */
 
-import React, {PropTypes} from 'react';
+import React from 'react';
 import {
     Text,
     TouchableOpacity,
     View,
     StyleSheet
 } from 'react-native';
+import PropTypes from 'prop-types';
 import StyleVariable from '../../style/StyleVariable';
 
 export default function NavbarButton(props) {

@@ -1,7 +1,8 @@
 /**
  * Created by ZHOU on 2016/8/1.
  */
-import React, {Component, PropTypes} from "react";
+import React, {Component} from "react";
+import PropTypes from 'prop-types';
 import {StyleSheet, Text, View, PixelRatio} from "react-native";
 import StyleVariable from "../../style/StyleVariable";
 const propTypes = {

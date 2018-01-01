@@ -14,6 +14,7 @@ import Styles from '../style/Index';
 import Config from '../config/Index';
 import Strings from './strings/Index';
 import BaseStrings from './strings/Basic';
+import Apis from '../config/api/Pension';
 import AppInfo from '../config/AppConfig';
 import Router from './function/RouterUtil';
 import Images from '../common/resource/Image';
@@ -31,6 +32,7 @@ import RefreshListView ,{ RefreshState }from '../components/basic/RefreshListVie
 export default class BaseComponent extends Component {
 	constructor (props) {
 		super(props);
+        this.apis = Apis;
 		this.utils = Utils;
 		this.appInfo = AppInfo;
 		this.config = Config;
@@ -41,6 +43,9 @@ export default class BaseComponent extends Component {
 		this.currentUserInfo = global.currentUserInfo;
 		this.windowWidth = Dimensions.get('window').width;
 		this.windowHeight = Dimensions.get('window').height;
+		this.mac = '983a4b29-e953-11e7-9428-e006e6bd0c2b';
+        this.roomId = '94c86967-dfce-11e7-bb83-e006e6bd0c2b';
+        this.buildingId = '4b97f329-dfce-11e7-bb83-e006e6bd0c2b';
 		this.strings = this.props.moduleName && Strings[`${this.props.moduleName.replace(/(\w)/, function (v) {
 				return v.toUpperCase();
 			})}`] || BaseStrings;

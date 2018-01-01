@@ -6,11 +6,12 @@
 
 import React, { Component } from 'react';
 import EmptyPage from './EmptyPage';
+import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, RefreshControl, ListView, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 
 const propTypes = {
-    onHeaderRefresh: React.PropTypes.func,
-    onFooterRefresh: React.PropTypes.func,
+    onHeaderRefresh: PropTypes.func,
+    onFooterRefresh: PropTypes.func,
 };
 
 const defaultProps = {
@@ -144,7 +145,7 @@ export default class RefreshListView extends Component {
                             <TouchableOpacity style={styles.footerContainer}
                                               onPress={() => this.startFooterRefreshing()}
                             >
-                                <Text style={styles.footerText}>
+                                <Text style={[styles.footerText,this.props.footerTextStyle]}>
                                     {this.props.footerFailureText}
                                 </Text>
                             </TouchableOpacity>;
@@ -154,7 +155,7 @@ export default class RefreshListView extends Component {
                         footer =
                             <View style={styles.footerContainer} >
                                 <ActivityIndicator size="small" color="#888888" />
-                                <Text style={styles.footerText}>
+                                <Text style={[styles.footerText,this.props.footerTextStyle]}>
                                     {this.props.footerRefreshingText}
                                 </Text>
                             </View>;
@@ -163,7 +164,7 @@ export default class RefreshListView extends Component {
                     case RefreshState.NoMoreData: {
                         footer =
                             <View style={styles.footerContainer} >
-                                <Text style={styles.footerText}>
+                                <Text style={[styles.footerText,this.props.footerTextStyle]}>
                                     {this.props.footerNoMoreDataText}
                                 </Text>
                             </View>;

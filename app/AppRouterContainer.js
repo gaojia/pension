@@ -5,17 +5,9 @@ import {
     StyleSheet,
     View,
 } from 'react-native';
-import {Scene, Router, Actions, ActionConst, Stack} from 'react-native-router-flux'
+import {Scene, Router, Actions, ActionConst, Stack, Drawer} from 'react-native-router-flux'
 import Utils from './utils/Index';
-import HomeScreen from './view/HomeScreen';
-import Typhoon from './view/typhoon/Typhoon';
-import Login from './view/login/Login';
-import LearningFiles from './view/learningFiles/LearningFiles'
-import Message from './view/message/Message'
-import Video from './view/video/VideoList'
-import Setting from './view/setting/Setting'
-import { ShipList, ShipDetail, VideoDetail, VideoPlay } from './view/Page';
-import ScrollableTabUtil from './common/function/ScrollableTabUtil';
+import Pages from './view/Page';
 
 const getSceneStyle = (/* NavigationSceneRendererProps */ props, computedProps) => {
     const style = {
@@ -44,17 +36,18 @@ export default class AppRouterContainer extends Component {
         return (
 			<Router getSceneStyle={getSceneStyle}  backAndroidHandler={this._onExitApp}>
 				<Stack key="root">
-					<Scene key="login" component={Login}  initial hideNavBar={true}/>
-					<Scene key="home" component={HomeScreen}  type="reset"  hideNavBar={true}/>
-					<Scene key="typhoon" component={Typhoon} title="台风预警"/>
-					<Scene key="shipList" component={ShipList} title="船列表"/>
-					<Scene key="shipDetail" component={ShipDetail} hideNavBar={true}/>
-					<Scene key="learningFiles" component={LearningFiles} title="学习文档"/>
-					<Scene key="message" component={Message} title="消息"/>
-					<Scene key="video" component={Video} title="视频"/>
-					<Scene key="videoDetail" component={VideoDetail}  title="视频详情"/>
-					<Scene key="videoPlay" component={VideoPlay} hideNavBar />
-					<Scene key="setting" component={Setting} title="设置" />
+                    {/*<Scene key="login" component={Login}   hideNavBar={true}/>*/}
+                    <Scene key="home" component={Pages.homePages.home} initial  type="reset"  hideNavBar={true}/>
+                    {/*<Scene key="typhoon" component={Typhoon} title="台风预警"/>*/}
+                    {/*<Scene key="shipList" component={ShipList} title="船列表"/>*/}
+                    {/*<Scene key="shipDetail" component={ShipDetail} hideNavBar={true}/>*/}
+                    {/*<Scene key="learningFiles" component={LearningFiles} title="学习文档"/>*/}
+                    <Scene key="message" drawer={true} component={Pages.messagePages.message} title="消息"/>
+                    {/*<Scene key="video" component={Video} title="视频"/>*/}
+                    {/*<Scene key="videoDetail" component={VideoDetail}  title="视频详情"/>*/}
+                    {/*<Scene key="videoPlay" component={VideoPlay} hideNavBar />*/}
+                    <Scene key="setting" component={Pages.settingPages.setting} title="设置" />
+                    <Scene key="regionSet" component={Pages.settingPages.regionSet} title="区域设置" rightButtonTextStyle={{bottom:5}} rightTitle={'重置'} onRight={() => {}}/>
 				</Stack>
 			</Router>
         );

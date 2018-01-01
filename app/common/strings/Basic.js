@@ -17,7 +17,7 @@ let Basic = {
 	feedback:'意见反馈',
 	itemFiles:{
 		fileDownload:'下载文档',
-	}
-
+	},
+	areaSetting: '区域设置'
 };
 module.exports = Basic;

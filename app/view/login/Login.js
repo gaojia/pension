@@ -44,7 +44,7 @@ export default class Login extends BaseComponent {
 					>
 						<View style={styles.logoContainer}>
 							<Image
-								source={require('../../images/logo.png')}
+								source={require('../../images/pension_logo.png')}
 							/>
 						</View>
 						<View style={styles.inputContainer} >

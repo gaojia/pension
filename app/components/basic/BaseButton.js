@@ -10,16 +10,17 @@ import {
     TouchableOpacity,
     StyleSheet,
 } from 'react-native'
+import PropTypes from 'prop-types';
 import StyleVariable from '../../style/StyleVariable';
 
 const propTypes = {
-    style: React.PropTypes.object,
-    textStyle: React.PropTypes.object,
-	imgStyle: React.PropTypes.object,
-    onPress: React.PropTypes.func,
-	text: React.PropTypes.string,
-	imgSource:React.PropTypes.object,
-	textPosition:React.PropTypes.string, //top,right,bottom,left
+    style: PropTypes.object,
+    textStyle: PropTypes.object,
+	imgStyle: PropTypes.object,
+    onPress: PropTypes.func,
+	text: PropTypes.string,
+	imgSource:PropTypes.object,
+	textPosition:PropTypes.string, //top,right,bottom,left
 }
 
 export default class BaseButton extends Component {

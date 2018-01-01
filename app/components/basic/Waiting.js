@@ -3,7 +3,7 @@
  * 2017/6/14 0014
  * 作者：高佳
  */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import {
     View,
     Modal,

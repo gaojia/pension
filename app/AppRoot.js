@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    View,
     Image,
     Text,
     NetInfo,
@@ -14,10 +15,10 @@ import PushNotification from 'react-native-push-notification'
 class AppRoot extends React.Component {
     constructor(props) {
         super(props);
-        NetInfo.isConnected.addEventListener(
-            'change',
-            this._handleFirstConnectivityChange
-        );
+        this.state = {
+            isLoading: true
+        };
+        this._check();
     }
 
     componentDidMount() {
@@ -25,6 +26,22 @@ class AppRoot extends React.Component {
         this.configLog();
         this._notificationConfig();
     }
+
+    _check = async () => {
+        await this._addNetInfoChangeEventListener();
+        this.setState({isLoading: false});
+    };
+
+    _addNetInfoChangeEventListener = () => {
+        let _this = this;
+        return new Promise(function (resolve, reject) {
+            NetInfo.isConnected.addEventListener(
+                'change',
+                _this._handleFirstConnectivityChange
+            );
+            resolve(true);
+        })
+    };
 
     _handleFirstConnectivityChange = (reach) => {
         // 移除网络监听
@@ -104,6 +121,11 @@ class AppRoot extends React.Component {
     };
 
     render() {
+        if (this.state.isLoading) {
+            return (
+                <View />
+            );
+        }
         return (
             <AppRouterContainer />
         );

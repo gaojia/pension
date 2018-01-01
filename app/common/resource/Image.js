@@ -32,4 +32,28 @@ export default Images = {
 	location: {
 		source: require('../../images/location.png'),
 	},
+    bgImage: {
+        source: require('../../images/floor.png'),
+    },
+    setting: {
+        source: require('../../images/set.png'),
+    },
+    list: {
+        source: require('../../images/list.png'),
+    },
+    message: {
+        source: require('../../images/message.png'),
+    },
+    i: {
+        source: require('../../images/i.png'),
+    },
+    areaSetting: {
+        source: require('../../images/areaSetting.png'),
+    },
+    aboutUs: {
+        source: require('../../images/aboutUs.png'),
+    },
+    building: {
+        source: require('../../images/building.png'),
+    },
 };
