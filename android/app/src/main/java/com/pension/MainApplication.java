@@ -13,6 +13,13 @@ import com.facebook.soloader.SoLoader;
 import java.util.Arrays;
 import java.util.List;
 
+import com.zphhhhh.speech.SpeechPackage;
+import com.beefe.picker.PickerViewPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.react.arron.speech.speechModulePackage;
+import com.github.yamill.orientation.OrientationPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
+
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
@@ -26,7 +33,13 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new VectorIconsPackage(),
-            new ReactNativePushNotificationPackage()
+            new ReactNativePushNotificationPackage(),
+            new RNDeviceInfo(),
+            new OrientationPackage(),
+            new PickerViewPackage(),
+            new speechModulePackage(),
+            new SpeechPackage(),
+            new SplashScreenReactPackage()
       );
     }
 

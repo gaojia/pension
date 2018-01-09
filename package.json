@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "harmony-reflect": "^1.5.1",
+    "native-speech": "^0.1.0",
     "react": "16.0.0",
     "react-native": "0.47.0",
     "react-native-device-info": "^0.13.0",
@@ -18,6 +19,8 @@
     "react-native-router-flux": "^4.0.0-beta.22",
     "react-native-scrollable-tab-view": "^0.8.0",
     "react-native-speech": "^0.1.2",
+    "react-native-speech-iflytek": "^0.2.2",
+    "react-native-splash-screen": "^3.0.6",
     "react-native-vector-icons": "^4.4.2",
     "react-native-webview-messaging": "^1.2.1"
   },

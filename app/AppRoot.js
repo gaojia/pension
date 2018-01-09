@@ -51,6 +51,10 @@ class AppRoot extends React.Component {
         );
     };
 
+    _onRequestWarnMsg = () => {
+
+    };
+
     _notificationConfig = () => {
 		PushNotification.configure({
 

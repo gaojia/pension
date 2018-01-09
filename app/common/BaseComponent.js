@@ -43,7 +43,7 @@ export default class BaseComponent extends Component {
 		this.currentUserInfo = global.currentUserInfo;
 		this.windowWidth = Dimensions.get('window').width;
 		this.windowHeight = Dimensions.get('window').height;
-		this.mac = '983a4b29-e953-11e7-9428-e006e6bd0c2b';
+		this.mac = '97563c37-ea21-11e7-a034-e006e6bd0c2b';
         this.roomId = '94c86967-dfce-11e7-bb83-e006e6bd0c2b';
         this.buildingId = '4b97f329-dfce-11e7-bb83-e006e6bd0c2b';
 		this.strings = this.props.moduleName && Strings[`${this.props.moduleName.replace(/(\w)/, function (v) {

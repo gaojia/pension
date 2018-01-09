@@ -27,8 +27,11 @@ import MenuBtn from './components/MenuBtn';
 import StyleVariable from '../style/StyleVariable';
 import Icon from 'react-native-vector-icons/Ionicons'
 import Orientation from 'react-native-orientation';
-import Speech from 'react-native-speech';
+// import Speech from 'react-native-speech';
+import Speech from 'native-speech';
+import { Recognizer, Synthesizer, SpeechConstant } from "react-native-speech-iflytek";
 import DeviceInfo from 'react-native-device-info';
+import SplashScreen from 'react-native-splash-screen'
 
 let houseWarnDataSource = [{
     id: 1,
@@ -69,15 +72,39 @@ export default class HomeScreen extends BaseComponent {
 				}
 			],
             houseWarnRecordSource: [],
-            rightDistance: new Animated.Value(-203)
+            rightDistance: new Animated.Value(-203),
+			speakContentData: [],
+            speakCurrentIndex: 0,
+			speakCurrentContent: '',
 		};
 	}
 
 	componentDidMount() {
+        SplashScreen.hide();
         InteractionManager.runAfterInteractions(() => {
             Orientation.lockToLandscape();
 			this._getWarnMsg();
+            Synthesizer.init('5a53520f');
+            this.speakContentInterval = setInterval(() => {
+                // Speech.isSpeaking().then((reading) => {
+                // 	!reading && this._speakContent(this._getCurrentSpeakContent());
+                // }).catch((ex) => {
+                //    console.log(ex)
+                // })
+				this.onSpeak(this._getCurrentSpeakContent());
+            }, 1000);
+
+            // this.deleteData = setInterval(() => {
+            //     this.state.warnSource.shift();
+            //     this.setState({});
+            // }, 1000);
+
+			this.watchWarnMsg = setInterval(() => {
+				this._getWarnMsg();
+			}, 1000);
 		});
+
+
 
         console.log('getDeviceId:'+DeviceInfo.getDeviceId())
         console.log('getDeviceName:'+DeviceInfo.getDeviceName())
@@ -89,10 +116,30 @@ export default class HomeScreen extends BaseComponent {
 		// this.webview.messagesChannel.on('custom-event-from-webview', eventData => console.log(eventData));
 	}
 
+	_getCurrentSpeakContent = () => {
+        let cIndex = this.state.speakCurrentIndex;
+        let cContentData = this.state.warnSource;
+        if(cContentData.length !== 0){
 
+            cIndex = cIndex >= cContentData.length ? 0 : cIndex;
+            let index = cIndex % cContentData.length;
+
+            this.state.speakCurrentIndex = ++cIndex;
+            return cContentData[index].content;
+        } else {
+            return '';
+        }
+	};
+
+    async onSpeak(content) {
+        let isSpeaking = await Synthesizer.isSpeaking();
+        !isSpeaking && content && Synthesizer.start(content);
+    }
 
 	componentWillMount() {
-
+        clearInterval(this.speakContentInterval);
+        clearInterval(this.deleteData);
+        clearInterval(this.watchWarnMsg);
 	}
 
 	sendMessageToWebView = () => {
@@ -121,13 +168,16 @@ export default class HomeScreen extends BaseComponent {
 				{/*<Image source={this.images.default_cover.source} style={{width:200,height:200}}/>*/}
 				<ImageBackground source = {this.images.bgImage.source} resizeMode='stretch' style={{flex:1}}>
 					<View style={styles.flatContainer}>
-						<FlatList
-							style={styles.flatList}
-							data={this.state.warnSource}
-							renderItem={this._renderItem}
-							keyExtractor={(item, index) => item.id}
-						/>
-
+						{
+                            this.state.warnSource.length > 0
+								? <FlatList
+									style={styles.flatList}
+									data={this.state.warnSource}
+									renderItem={this._renderItem}
+									keyExtractor={(item, index) => item.id}
+								 />
+								: null
+						}
 					</View>
 					<View style={styles.LTContainer}>
                         {this._renderImgBtn('taskList',this.images.list.source)}
@@ -137,12 +187,6 @@ export default class HomeScreen extends BaseComponent {
                         {this._renderImgBtn('setting',this.images.setting.source)}
 					</View>
 					<Animated.View style={[styles.recorderContainer,{right: this.state.rightDistance}]}>
-						{/*<FlatList*/}
-							{/*style={[styles.flatList,{top:20}]}*/}
-							{/*data={this.state.houseWarnRecordSource}*/}
-							{/*renderItem={this._renderHouseItem}*/}
-							{/*keyExtractor={(item, index) => item.id}*/}
-						{/*/>*/}
 						{
 							this.renderListView({
                                 style:{flex:1,marginTop:20},
@@ -173,7 +217,6 @@ export default class HomeScreen extends BaseComponent {
 						onPress: () => {this.toast('切换房间')}
 					});
 					i++;
-                    // this._startSpeak(item);
 				});
 				this.setState({});
 			},
@@ -187,10 +230,14 @@ export default class HomeScreen extends BaseComponent {
         this.request.sendGet({
             url: this.apis.getAllWarnMsgByRoomId+`?roomId=${this.roomId}`,
             success: (data) => {
-                this.setState({
-                    houseWarnRecordSource:houseWarnDataSource
-				});
-                this.listView && this.listView.endRefreshing(this.RefreshState.NoMoreData);
+            	if(data.code === 200){
+                    this.setState({
+                        houseWarnRecordSource:data.message.alertHistories
+                    });
+                    this.listView && this.listView.endRefreshing(this.RefreshState.NoMoreData);
+				} else {
+                    this.listView && this.listView.endRefreshing(this.RefreshState.Failure);
+				}
             },
             error: () => {
 
@@ -223,15 +270,13 @@ export default class HomeScreen extends BaseComponent {
 		}
 	};
 
-	_speakContent = (dataSource) => {
-
+	_speakContent = (content) => {
+		if(content)
+			this._startSpeak(content);
 	};
 
 	_startSpeak = (data) => {
-		return Speech.speak({
-            text: data,
-            voice: 'zh'
-        });
+		return Speech.speak(data);
 	};
 
 	_renderImgBtn = (btnType, source)=>{
@@ -244,16 +289,9 @@ export default class HomeScreen extends BaseComponent {
 	};
 
 	_onImgBtnAction =  (btnType) =>{
-		// this.toast(btnType);
 		switch (btnType){
 			case 'taskList':{
                 this._startAnimation();
-                // if(this.state.warnSource.length > 0){
-                //     this.state.warnSource.map(async (data) => {
-                //          this._startSpeak(data.content);
-                //     })
-                // }
-                // await this._startSpeak(data.content);
 			}
 				break;
 			case 'setting':{
@@ -295,7 +333,7 @@ export default class HomeScreen extends BaseComponent {
     _renderHouseItem = (data) => {
         return (
 			<View style={styles.recorderItem}>
-				<Text style={[styles.recorderText,{color:(data.item.type === 1 ? 'red' : null)}]}>{data.item.content}</Text>
+				<Text style={[styles.recorderText,{color:(data.item.deviceType === 1 ? 'red' : null)}]}>{data.item.content}</Text>
 			</View>
         )
 	}

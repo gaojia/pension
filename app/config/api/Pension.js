@@ -12,6 +12,7 @@ let PensionUrl = {
     getAllWarnMsgByRoomId: pensionHost + 'pad--room-trace',
     getBuildingInfo: pensionHost + 'buildings',
     getUnitByBuildingId: pensionHost + 'units',
+    getAllMsgByMac: pensionHost + 'pad-all-room-trace-history',
     watchRoomByBuilding: pensionHost + 'building-watch',
     watchRoomByUnit: pensionHost + 'unit-watch',
     watchRoomByFloor: pensionHost + 'floor-watch',

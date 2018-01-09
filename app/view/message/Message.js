@@ -6,7 +6,7 @@
  * 		刷新+加载更多
  */
 
-import React,{PureComponent} from 'react';
+import React,{PureComponent, Component} from 'react';
 import {
 	View,
 	Text,
@@ -14,46 +14,14 @@ import {
 	StatusBar,
 	StyleSheet,
 	TouchableOpacity,
+	InteractionManager,
 } from 'react-native';
 
 import BaseComponent from "../../common/BaseComponent";
 import StyleVariable from '../../style/StyleVariable'
 import RowSplitLine from '../../components/basic/RowSplitLine';
 
-let sectionData = [ // 不同section渲染相同类型的子组件
-	{
-        data: [{
-            type:2,
-            title:'警报解除',
-            content:'1号楼，3层，302室，警报呼叫解除',
-        }],
-        time: '2017-08-09 09:00:00',
-	},
-	{
-        data: [{
-            type: 1,
-            title:'警报预警',
-            content:'1号楼，3层，302室，进行警报呼叫'
-        }],
-        time: '2017-08-09 08:55:00',
-	},
-	{
-        data: [{
-            type: 2,
-            title:'警报解除',
-            content:'2号楼，3层，302室，进行警报呼叫'
-        }],
-        time: '2017-08-09 08:55:00',
-    },
-    {
-        data: [{
-            type: 1,
-            title:'警报预警',
-            content:'2号楼，3层，302室，进行警报呼叫'
-        }],
-        time: '2017-08-09 08:55:00',
-    },
-]
+let sectionData = [];
 
 export default class Message extends BaseComponent {
 	constructor(props) {
@@ -63,6 +31,13 @@ export default class Message extends BaseComponent {
 		}
 
 	}
+
+	componentDidMount() {
+        InteractionManager.runAfterInteractions(() => {
+            this.listView && this.listView.startHeaderRefreshing();
+		});
+	}
+
 	render(){
 		return(
 			<View style={styles.container}>
@@ -70,13 +45,23 @@ export default class Message extends BaseComponent {
 					{/*hidden={false}*/}
 					{/*animated={false}*/}
 				{/*/>*/}
-				<SectionList
-					//ListHeaderComponent={this._renderForBanner}
-					keyExtractor={this._extraUniqueKey}
-					renderItem={this._renderListItem}
-					renderSectionHeader={this._renderSectionHeader}
-					sections={this.state.sectionSource}
-				/>
+				{/*<SectionList*/}
+					{/*//ListHeaderComponent={this._renderForBanner}*/}
+					{/*keyExtractor={(item, index) => {return "index" + index + item;}}*/}
+					{/*renderItem={this._renderListItem}*/}
+					{/*renderSectionHeader={this._renderSectionHeader}*/}
+					{/*sections={this.state.sectionSource}*/}
+				{/*/>*/}
+				{
+                    this.renderListView({
+                        style:{flex:1},
+                        footerTextStyle: {fontSize:10},
+                        data: this.state.sectionSource,
+                        renderItem: (rowData, row, rowID) => this._renderListItem(rowData, row, rowID),
+                        onHeaderRefresh: () => this._onRequestListWithReload(true),
+                        onFooterRefresh: () => this._onRequestListWithReload(false)
+                    })
+				}
 			</View>
 		)
 	}
@@ -88,25 +73,49 @@ export default class Message extends BaseComponent {
 				item={item}
 			/>
 		)
-	}
-	//key的方法
-	_extraUniqueKey(item, index) {
-		return "index" + index + item;
-	}
+	};
+
 	_renderSectionHeader = (data) =>{
 		let section = data.section;
 		return(
 			<Header data={section} />
 		)
-	}
+	};
 
 	_onPressItem = (item) =>{
 		let data=item.item;
 		//this.toast(data.title);
 	}
+
+    _onRequestListWithReload = (isPullDownRefresh) => {
+        if (isPullDownRefresh) {
+            this.state.houseWarnRecordSource = [];
+            this.state.pageIndex = 1;
+        } else {
+            this.state.pageIndex++;
+        }
+        this._getRoomWarnMsg();
+	};
+
+    _getRoomWarnMsg = () => {
+        this.request.sendGet({
+            url: this.apis.getAllMsgByMac+`?macId=${this.mac}`,
+            success: (data) => {
+                if(data.code === 200){
+                    this.setState({
+                        sectionSource: data.message.alertHistories
+                    });
+                    this.listView && this.listView.endRefreshing(this.RefreshState.NoMoreData);
+                }
+            },
+            error: () => {
+
+            }
+        })
+	}
 }
 
-class Header extends PureComponent {
+class Header extends Component {
 	render(){
 		let data = this.props.data;
 		return(
@@ -125,8 +134,8 @@ class ListItem extends PureComponent {
 		return(
 			<View style={styles.itemContainer}>
 				<View style={styles.itemSubContainer}>
-					<Text style={[styles.itemTitle,{color: (item.type === 1 ? 'red': 'black')}]}>
-						{item.title}
+					<Text style={[styles.itemTitle,{color: (item.deviceType === 1 ? 'red': 'black')}]}>
+						{item.deviceType === 1 ? '警报预警': '警报解除'}
 					</Text>
 					<RowSplitLine/>
 					<Text style={styles.itemContent}>
@@ -145,15 +154,16 @@ var styles = StyleSheet.create({
 	},
 	itemContainer:{
 		flex:1,
-		paddingLeft:20,
+		paddingTop:20,
+		overflow:'hidden',
 		paddingRight:20,
-		paddingBottom:20,
+		paddingLeft:20,
 	},
 	itemSubContainer:{
 		flex:1,
 		// padding:20,
 		backgroundColor:'white',
-		borderRadius:5,
+		borderRadius:10,
 	},
 	itemTitle:{
 		flex:1,

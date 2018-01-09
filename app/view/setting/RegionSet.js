@@ -26,7 +26,8 @@ export default class RegionSet extends BaseComponent {
         super(props);
         this.state = {
             selectBuildingData: '',
-            buildingData: []
+            buildingData: [],
+            unitData: []
         }
     }
 
@@ -36,6 +37,10 @@ export default class RegionSet extends BaseComponent {
         });
 
         this.router.refresh({onRight: () => this._reset()})
+    }
+
+    componentWillUnmount() {
+        Picker.hide();
     }
 
     render(){
@@ -81,7 +86,7 @@ export default class RegionSet extends BaseComponent {
         if(buildingData.result) {
             this.state.buildingData = buildingData.data;
             buildingData.data.map((item) => {
-                pickerData.push((item.text));
+                pickerData.push(item.text)
             });
             this._initPicker(pickerData);
             this.setState({
@@ -100,15 +105,48 @@ export default class RegionSet extends BaseComponent {
             pickerCancelBtnText: '取消',
             onPickerConfirm: (data, index) => {
                 this.toast(data + ','+ this.state.buildingData[index].value);
-
-                this.setState({
-                    selectBuildingData: data
-                })
+                this._getUnitData(this.state.buildingData[index].value);
             },
             onPickerCancel: data => {
                 console.log(data);
             },
         });
+    };
+
+    _getUnitData = async (buidingId) => {
+        let pickerData = [];
+        let unitData = await this._getUnitInfoByBuidingId(buidingId);
+        if(unitData.result) {
+            this.state.unitData = unitData.data;
+            unitData.data.map((item) => {
+                pickerData.push(item.text)
+            });
+            this._showUnitPicker(pickerData);
+
+        } else {
+            this.toast(unitData.data)
+        }
+    };
+
+    _showUnitPicker = (data) => {
+        Picker.init({
+            pickerData: data,
+            pickerTitleText: '单元',
+            pickerConfirmBtnText: '确认',
+            pickerCancelBtnText: '取消',
+            onPickerConfirm: (data, index) => {
+                this.toast(data + ','+ this.state.unitData[index].value);
+
+                this.setState({
+                    selectBuildingData: this.state.selectBuildingData + ' ' + data
+                })
+
+            },
+            onPickerCancel: data => {
+                console.log(data);
+            },
+        });
+        Picker.show();
     };
 
     _getBuildingInfo = () => {
@@ -135,7 +173,36 @@ export default class RegionSet extends BaseComponent {
                 })}
             })
         });
+    };
 
+    _getUnitInfoByBuidingId = (buidingId) => {
+        if(!buidingId)
+        {
+            return;
+        }
+        return new Promise((reslove, reject) => {
+            this.request.sendGet({
+                url: this.apis.getUnitByBuildingId + `?buildingId=${buidingId}`,
+                success: (data) => {
+                    if(data.code === 200){
+                        reslove({
+                            result:true,
+                            data: data.message
+                        });
+                    } else {
+                        reslove({
+                            result:false,
+                            data: data.message
+                        });
+                    }
+
+                },
+                error: (err) => {reject({
+                    result:false,
+                    data: err
+                })}
+            })
+        });
     };
 
     _reset = () => {

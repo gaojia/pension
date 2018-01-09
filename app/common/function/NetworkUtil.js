@@ -63,7 +63,7 @@ function post(param) {
 
 function get(param) {
     NetInfo.isConnected.fetch().done((isConnected) => {
-        if(isConnected){
+        // if(isConnected){
             param.userToken = global.currentUserInfo && global.currentUserInfo.access_token || "";
             Utils.sendGetRequest(param.url, param.body, param.userToken, param.success, (response) => {
                 if (response.code == 401) {
@@ -77,10 +77,10 @@ function get(param) {
                     errorCodeHandle(response, param.error);
                 }
             })
-        } else {
-            Utils.showMessage('无网络请求');
-            param.error('无网络请求');
-        }
+        // } else {
+        //     Utils.showMessage('无网络请求');
+        //     param.error('无网络请求');
+        // }
     });
 }
 

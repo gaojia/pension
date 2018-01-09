@@ -38,6 +38,7 @@
 		3A243D141FF8B5FA00E3CE2E /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A243D0E1FF8B58C00E3CE2E /* libRNDeviceInfo.a */; };
 		3A54EA301FEBBE0800E83326 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A54EA2D1FEBBDF900E83326 /* libRCTPushNotification.a */; };
 		3A54EA371FEBC57100E83326 /* libRCTOrientation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A54EA361FEBC54C00E83326 /* libRCTOrientation.a */; };
+		3AF5BA7520036E6300FD51CC /* libspeech.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF5BA7220036E5300FD51CC /* libspeech.a */; };
 		3AFF513F1FEFE8BD006E14FB /* libRCTBEEPickerManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AFF513E1FEFE8AA006E14FB /* libRCTBEEPickerManager.a */; };
 		3AFF51461FEFEF32006E14FB /* libSpeechSynthesizer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AFF51451FEFEF24006E14FB /* libSpeechSynthesizer.a */; };
 		4A85F6E97A504B8F993BB93D /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B72AD9129BCD449981A2BB07 /* Ionicons.ttf */; };
@@ -195,6 +196,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RCTOrientation;
+		};
+		3AF5BA7120036E5300FD51CC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3AF5BA4920036E5200FD51CC /* speech.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B1C5AE211DC9C8F000CF1D49;
+			remoteInfo = speech;
 		};
 		3AFF513D1FEFE8AA006E14FB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -359,6 +367,7 @@
 		3A243CE71FF8B58C00E3CE2E /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		3A54EA271FEBBDF800E83326 /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		3A54EA311FEBC54C00E83326 /* RCTOrientation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTOrientation.xcodeproj; path = "../node_modules/react-native-orientation/iOS/RCTOrientation.xcodeproj"; sourceTree = "<group>"; };
+		3AF5BA4920036E5200FD51CC /* speech.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = speech.xcodeproj; path = "../node_modules/native-speech/ios/speech/speech.xcodeproj"; sourceTree = "<group>"; };
 		3AFF51391FEFE8AA006E14FB /* RCTBEEPickerManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBEEPickerManager.xcodeproj; path = "../node_modules/react-native-picker/ios/RCTBEEPickerManager.xcodeproj"; sourceTree = "<group>"; };
 		3AFF51401FEFEF23006E14FB /* SpeechSynthesizer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SpeechSynthesizer.xcodeproj; path = "../node_modules/react-native-speech/SpeechSynthesizer.xcodeproj"; sourceTree = "<group>"; };
 		42A6937D9DD84558A446CF1E /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
@@ -389,6 +398,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AF5BA7520036E6300FD51CC /* libspeech.a in Frameworks */,
 				3A243D141FF8B5FA00E3CE2E /* libRNDeviceInfo.a in Frameworks */,
 				3AFF51461FEFEF32006E14FB /* libSpeechSynthesizer.a in Frameworks */,
 				3AFF513F1FEFE8BD006E14FB /* libRCTBEEPickerManager.a in Frameworks */,
@@ -579,6 +589,29 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		3A5D616B200134280058ECD9 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				71C2804F4D63467A9C6D23C5 /* libRNVectorIcons.a */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		3AF5BA4A20036E5200FD51CC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3AF5BA7220036E5300FD51CC /* libspeech.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3AF5BA7420036E6300FD51CC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		3AFF513A1FEFE8AA006E14FB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -634,6 +667,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				3AF5BA4920036E5200FD51CC /* speech.xcodeproj */,
 				3A243CE71FF8B58C00E3CE2E /* RNDeviceInfo.xcodeproj */,
 				3AFF51401FEFEF23006E14FB /* SpeechSynthesizer.xcodeproj */,
 				3AFF51391FEFE8AA006E14FB /* RCTBEEPickerManager.xcodeproj */,
@@ -672,6 +706,8 @@
 				00E356EF1AD99517003FC87E /* PensionTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				5011D576D1CB4B89B6D08437 /* Resources */,
+				3A5D616B200134280058ECD9 /* Recovered References */,
+				3AF5BA7420036E6300FD51CC /* Frameworks */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -865,6 +901,10 @@
 					ProjectRef = D2A289D69D85487A9AB436A2 /* RNVectorIcons.xcodeproj */;
 				},
 				{
+					ProductGroup = 3AF5BA4A20036E5200FD51CC /* Products */;
+					ProjectRef = 3AF5BA4920036E5200FD51CC /* speech.xcodeproj */;
+				},
+				{
 					ProductGroup = 3AFF51411FEFEF23006E14FB /* Products */;
 					ProjectRef = 3AFF51401FEFEF23006E14FB /* SpeechSynthesizer.xcodeproj */;
 				},
@@ -1004,6 +1044,13 @@
 			fileType = archive.ar;
 			path = libRCTOrientation.a;
 			remoteRef = 3A54EA351FEBC54C00E83326 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		3AF5BA7220036E5300FD51CC /* libspeech.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libspeech.a;
+			remoteRef = 3AF5BA7120036E5300FD51CC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		3AFF513E1FEFE8AA006E14FB /* libRCTBEEPickerManager.a */ = {
