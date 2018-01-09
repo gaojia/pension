@@ -48,6 +48,15 @@ export default class Setting extends BaseComponent {
 						/>
 						<RowSplitLine/>
 						<BlockTitle
+							title={this.strings.serviceConfig}
+							leftImage={this.images.serviceConfig.source}
+							onPress={() => {this.router.jumpToPage('serviceConfig')}}
+							iconleftmarginLeft={16}
+							haveMore={true}
+							imgStyle={{width:15,height:15}}
+						/>
+						<RowSplitLine/>
+						<BlockTitle
 							title={this.strings.aboutUs}
 							leftImage={this.images.aboutUs.source}
 							onPress={() => {this.toast('养老')}}

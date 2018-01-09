@@ -26,7 +26,6 @@ import PushNotification from 'react-native-push-notification';
 import MenuBtn from './components/MenuBtn';
 import StyleVariable from '../style/StyleVariable';
 import Icon from 'react-native-vector-icons/Ionicons'
-import Orientation from 'react-native-orientation';
 // import Speech from 'react-native-speech';
 import Speech from 'native-speech';
 import { Recognizer, Synthesizer, SpeechConstant } from "react-native-speech-iflytek";
@@ -82,7 +81,6 @@ export default class HomeScreen extends BaseComponent {
 	componentDidMount() {
         SplashScreen.hide();
         InteractionManager.runAfterInteractions(() => {
-            Orientation.lockToLandscape();
 			this._getWarnMsg();
             Synthesizer.init('5a53520f');
             this.speakContentInterval = setInterval(() => {
@@ -94,26 +92,14 @@ export default class HomeScreen extends BaseComponent {
 				this.onSpeak(this._getCurrentSpeakContent());
             }, 1000);
 
-            // this.deleteData = setInterval(() => {
-            //     this.state.warnSource.shift();
-            //     this.setState({});
-            // }, 1000);
-
 			this.watchWarnMsg = setInterval(() => {
 				this._getWarnMsg();
 			}, 1000);
 		});
 
-
-
         console.log('getDeviceId:'+DeviceInfo.getDeviceId())
         console.log('getDeviceName:'+DeviceInfo.getDeviceName())
-        //console.log('getMACAddress:'+DeviceInfo.getMACAddress().then((data) => console.log(data)))
         console.log('getUniqueID:'+DeviceInfo.getUniqueID())
-		// JPushModule.notifyJSDidLoad(()=>{});
-		// this.webview.messagesChannel.on('text', text => console.log(text));
-		// this.webview.messagesChannel.on('json', json => console.log(json));
-		// this.webview.messagesChannel.on('custom-event-from-webview', eventData => console.log(eventData));
 	}
 
 	_getCurrentSpeakContent = () => {
@@ -141,18 +127,6 @@ export default class HomeScreen extends BaseComponent {
         clearInterval(this.deleteData);
         clearInterval(this.watchWarnMsg);
 	}
-
-	sendMessageToWebView = () => {
-		// this.webview.sendJSON({
-		//   payload: 'JSON from RN'
-		// });
-		///AlertIOS.alert('send ship');
-		//this.webview.send('ship');
-
-		// this.webview.emit('custom-event-from-rn', { payload: 'Custom event from RN' });
-
-		this.router.jumpToPage('typhoon')
-	};
 
 	render() {
 		return (
@@ -206,19 +180,23 @@ export default class HomeScreen extends BaseComponent {
 
 	_getWarnMsg = () => {
 		this.request.sendGet({
-			url: this.apis.getAllWarnMsgByMac+`?macId=${this.mac}`,
+			url: global.service + this.apis.getAllWarnMsgByMac+`?macId=${this.mac}`,
 			success: (data) => {
-				let i = 0;
-				this.state.warnSource = [];
-				data.message.alertsInfo.map((item) => {
-					this.state.warnSource.push({
-						id: i,
-						content: item,
-						onPress: () => {this.toast('切换房间')}
-					});
-					i++;
-				});
-				this.setState({});
+                if(data.code === 200){
+                    let i = 0;
+                    this.state.warnSource = [];
+                    data.message.alertsInfo.map((item) => {
+                        this.state.warnSource.push({
+                            id: i,
+                            content: item,
+                            onPress: () => {this.toast('切换房间')}
+                        });
+                        i++;
+                    });
+                    this.setState({});
+                } else {
+                	this.toast(data.message)
+				}
 			},
 			error: () => {
 
@@ -228,7 +206,7 @@ export default class HomeScreen extends BaseComponent {
 
 	_getRoomWarnMsg = () => {
         this.request.sendGet({
-            url: this.apis.getAllWarnMsgByRoomId+`?roomId=${this.roomId}`,
+            url: global.service + this.apis.getAllWarnMsgByRoomId+`?roomId=${this.roomId}`,
             success: (data) => {
             	if(data.code === 200){
                     this.setState({
@@ -291,7 +269,10 @@ export default class HomeScreen extends BaseComponent {
 	_onImgBtnAction =  (btnType) =>{
 		switch (btnType){
 			case 'taskList':{
-                this._startAnimation();
+				this.utils.removeStorageItem('service',() => {
+					this.toast('移除成功')
+				})
+                //this._startAnimation();
 			}
 				break;
 			case 'setting':{

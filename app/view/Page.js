@@ -16,6 +16,7 @@ import message from './message/Message';
 
 import regionSet from './setting/RegionSet';
 import setting from  './setting/Setting';
+import serviceConfig from './setting/ServiceConfig';
 
 let homePages = {
     home: home
@@ -27,7 +28,8 @@ let messagePages = {
 
 let settingPages = {
     regionSet: regionSet,
-    setting: setting
+    setting: setting,
+    serviceConfig: serviceConfig
 };
 
 export default {

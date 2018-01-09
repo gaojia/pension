@@ -5,8 +5,8 @@
  */
 
 import HostAPI from './HostApi';
-let pensionHost = HostAPI.Pension;
-
+//let pensionHost = HostAPI.Pension;
+let pensionHost = '/api/pad-watch/';
 let PensionUrl = {
     getAllWarnMsgByMac: pensionHost + 'pad-all-room-trace',
     getAllWarnMsgByRoomId: pensionHost + 'pad--room-trace',
@@ -19,6 +19,7 @@ let PensionUrl = {
     watchRoomById: pensionHost + 'room-watch',
     cancelWatchRoomById: pensionHost + 'room-unwatch',
     cancelRoomByMac: pensionHost + 'unwatch',
+    test: pensionHost + 'test',
 };
 
 export default PensionUrl;

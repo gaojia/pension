@@ -9,7 +9,7 @@ import {
     BackAndroid,
 } from 'react-native'
 import AppRouterContainer from './AppRouterContainer'
-
+import Orientation from 'react-native-orientation';
 import PushNotification from 'react-native-push-notification'
 
 class AppRoot extends React.Component {
@@ -22,14 +22,15 @@ class AppRoot extends React.Component {
     }
 
     componentDidMount() {
+        Orientation.lockToLandscape();
         this.configErrorHandler();
         this.configLog();
         this._notificationConfig();
     }
 
     _check = async () => {
-        await this._addNetInfoChangeEventListener();
-        this.setState({isLoading: false});
+        let result = await this._addNetInfoChangeEventListener();
+        result && this.setState({isLoading: false});
     };
 
     _addNetInfoChangeEventListener = () => {
@@ -51,7 +52,7 @@ class AppRoot extends React.Component {
         );
     };
 
-    _onRequestWarnMsg = () => {
+    _onGetLocalService = async () => {
 
     };
 

@@ -56,4 +56,7 @@ export default Images = {
     building: {
         source: require('../../images/building.png'),
     },
+    serviceConfig: {
+        source: require('../../images/serviceConfig.png'),
+    },
 };

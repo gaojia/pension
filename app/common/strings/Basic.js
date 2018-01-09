@@ -18,6 +18,7 @@ let Basic = {
 	itemFiles:{
 		fileDownload:'下载文档',
 	},
-	areaSetting: '区域设置'
+	areaSetting: '区域设置',
+    serviceConfig:'服务器配置',
 };
 module.exports = Basic;

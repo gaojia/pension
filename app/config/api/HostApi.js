@@ -8,15 +8,17 @@ const APPModel = {
     Product : 1,
 };
 
+//http://47.94.103.126
+
 let  HostAPI = (function (model = APPModel.Debug) {
     switch (model){
         case APPModel.Debug:
             return {
-                Pension: 'http://47.94.103.126/api/pad-watch/',
+                Pension: global.service + '/api/pad-watch/',
             };
         case APPModel.Product:
             return {
-                Pension: 'http://47.94.103.126/api/pad-watch/',
+                Pension: global.service + '/api/pad-watch/',
             }
     }
 })(APPModel.Product);

@@ -29,15 +29,48 @@ export default class AppRouterContainer extends Component {
     constructor (props) {
         super(props);
         console.log('store==>' + JSON.stringify(props));
+
+        this.state = {
+            isLoading: true
+        };
+
+        this.dataHandle();
     }
 
+    dataHandle = async () => {
+        let service = await this.getStorageItem('service');
+        if(service){
+            global.service = service;
+            this.setState({isLoading: false, initial: 'home'});
+        } else {
+            this.setState({isLoading: false, initial: 'service'});
+        }
+    };
+
+    getStorageItem = (key,callback) => {
+        return new Promise((resolve, reject) => {
+            Utils.getStorageItem(key, (error, result) => {
+                if(result) {
+                    callback && callback(error, result);
+                    resolve(result);
+                } else {
+                    resolve(null);
+                }
+            });
+        });
+    };
 
     render () {
+        if (this.state.isLoading) {
+            return (
+                <View />
+            );
+        }
         return (
 			<Router getSceneStyle={getSceneStyle}  backAndroidHandler={this._onExitApp}>
 				<Stack key="root">
                     {/*<Scene key="login" component={Login}   hideNavBar={true}/>*/}
-                    <Scene key="home" component={Pages.homePages.home} initial  type="reset"  hideNavBar={true}/>
+                    <Scene key="home" component={Pages.homePages.home} initial={this.state.initial === 'home'}  type="reset"  hideNavBar={true}/>
                     {/*<Scene key="typhoon" component={Typhoon} title="台风预警"/>*/}
                     {/*<Scene key="shipList" component={ShipList} title="船列表"/>*/}
                     {/*<Scene key="shipDetail" component={ShipDetail} hideNavBar={true}/>*/}
@@ -46,8 +79,9 @@ export default class AppRouterContainer extends Component {
                     {/*<Scene key="video" component={Video} title="视频"/>*/}
                     {/*<Scene key="videoDetail" component={VideoDetail}  title="视频详情"/>*/}
                     {/*<Scene key="videoPlay" component={VideoPlay} hideNavBar />*/}
+                    <Scene key="serviceConfig" initial={this.state.initial === 'service'}  component={Pages.settingPages.serviceConfig} title="服务器配置" rightTitle={'确定'} onRight={() => {}}/>
                     <Scene key="setting" component={Pages.settingPages.setting} title="设置" />
-                    <Scene key="regionSet" component={Pages.settingPages.regionSet} title="区域设置" rightButtonTextStyle={{bottom:5}} rightTitle={'重置'} onRight={() => {}}/>
+                    <Scene key="regionSet" component={Pages.settingPages.regionSet} title="区域设置" rightTitle={'重置'} onRight={() => {}}/>
 				</Stack>
 			</Router>
         );

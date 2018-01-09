@@ -19,6 +19,7 @@ import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.react.arron.speech.speechModulePackage;
 import com.github.yamill.orientation.OrientationPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import com.pension.commontools.RCTCommonToolsPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -39,7 +40,8 @@ public class MainApplication extends Application implements ReactApplication {
             new PickerViewPackage(),
             new speechModulePackage(),
             new SpeechPackage(),
-            new SplashScreenReactPackage()
+            new SplashScreenReactPackage(),
+            new RCTCommonToolsPackage()
       );
     }
 

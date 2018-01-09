@@ -99,7 +99,7 @@ export default class Message extends BaseComponent {
 
     _getRoomWarnMsg = () => {
         this.request.sendGet({
-            url: this.apis.getAllMsgByMac+`?macId=${this.mac}`,
+            url: global.service + this.apis.getAllMsgByMac+`?macId=${this.mac}`,
             success: (data) => {
                 if(data.code === 200){
                     this.setState({

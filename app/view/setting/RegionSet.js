@@ -152,7 +152,7 @@ export default class RegionSet extends BaseComponent {
     _getBuildingInfo = () => {
         return new Promise((reslove, reject) => {
             this.request.sendGet({
-                url: this.apis.getBuildingInfo,
+                url: global.service + this.apis.getBuildingInfo,
                 success: (data) => {
                     if(data.code === 200){
                         reslove({
@@ -182,7 +182,7 @@ export default class RegionSet extends BaseComponent {
         }
         return new Promise((reslove, reject) => {
             this.request.sendGet({
-                url: this.apis.getUnitByBuildingId + `?buildingId=${buidingId}`,
+                url: global.service + this.apis.getUnitByBuildingId + `?buildingId=${buidingId}`,
                 success: (data) => {
                     if(data.code === 200){
                         reslove({
