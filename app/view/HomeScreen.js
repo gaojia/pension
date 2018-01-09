@@ -269,10 +269,10 @@ export default class HomeScreen extends BaseComponent {
 	_onImgBtnAction =  (btnType) =>{
 		switch (btnType){
 			case 'taskList':{
-				this.utils.removeStorageItem('service',() => {
-					this.toast('移除成功')
-				})
-                //this._startAnimation();
+				// this.utils.removeStorageItem('service',() => {
+				// 	this.toast('移除成功')
+				// })
+                this._startAnimation();
 			}
 				break;
 			case 'setting':{
