@@ -32,44 +32,15 @@ import { Recognizer, Synthesizer, SpeechConstant } from "react-native-speech-ifl
 import DeviceInfo from 'react-native-device-info';
 import SplashScreen from 'react-native-splash-screen'
 
-let houseWarnDataSource = [{
-    id: 1,
-    type:2,
-    content:'警报解除 2017-12-12 00:00:00',
-},{
-    id: 2,
-    type:1,
-    content:'警报呼叫 2017-12-12 00:00:00',
-},{
-    id: 3,
-    type:2,
-    content:'警报解除 2017-12-12 00:00:00',
-},{
-    id: 4,
-    type:1,
-    content:'警报呼叫 2017-12-12 00:00:00',
-}];
-
 export default class HomeScreen extends BaseComponent {
 	constructor(props) {
 		super(props);
 		this.state= {
+            roomId: '',
 			showMore: false,
 			showTypeList:false,
-			warnSource: [
-				{
-					id: 1,
-					content:'1号楼，3层，302室，有警报呼叫，请及时处理！',
-				},
-				{
-                    id: 2,
-                    content:'2号楼，2层，202室，有警报呼叫，请及时处理！',
-				},
-				{
-                    id: 3,
-                    content:'3号楼，1层，102室，有警报呼叫，请及时处理！',
-				}
-			],
+			warnSource: [],
+            houseDataSource: [],
             houseWarnRecordSource: [],
             rightDistance: new Animated.Value(-203),
 			speakContentData: [],
@@ -81,7 +52,12 @@ export default class HomeScreen extends BaseComponent {
 	componentDidMount() {
         SplashScreen.hide();
         InteractionManager.runAfterInteractions(() => {
-			this._getWarnMsg();
+            DeviceInfo.getMACAddress().then((mac) => {
+            	global.mac = this.state.mac = mac;
+                this._getWatchRoomByMac(mac);
+                this._getWarnMsg(mac);
+            });
+
             Synthesizer.init('5a53520f');
             this.speakContentInterval = setInterval(() => {
                 // Speech.isSpeaking().then((reading) => {
@@ -93,13 +69,13 @@ export default class HomeScreen extends BaseComponent {
             }, 1000);
 
 			this.watchWarnMsg = setInterval(() => {
-				this._getWarnMsg();
+				this._getWarnMsg(this.state.mac);
 			}, 1000);
 		});
 
-        console.log('getDeviceId:'+DeviceInfo.getDeviceId())
-        console.log('getDeviceName:'+DeviceInfo.getDeviceName())
-        console.log('getUniqueID:'+DeviceInfo.getUniqueID())
+        // console.log('getDeviceId:'+DeviceInfo.getDeviceId())
+        // console.log('getDeviceName:'+DeviceInfo.getDeviceName())
+        // console.log('getUniqueID:'+DeviceInfo.getUniqueID())
 	}
 
 	_getCurrentSpeakContent = () => {
@@ -118,13 +94,14 @@ export default class HomeScreen extends BaseComponent {
 	};
 
     async onSpeak(content) {
+    	if(!content) return;
+
         let isSpeaking = await Synthesizer.isSpeaking();
-        !isSpeaking && content && Synthesizer.start(content);
+        !isSpeaking && Synthesizer.start(content);
     }
 
 	componentWillMount() {
         clearInterval(this.speakContentInterval);
-        clearInterval(this.deleteData);
         clearInterval(this.watchWarnMsg);
 	}
 
@@ -154,11 +131,15 @@ export default class HomeScreen extends BaseComponent {
 						}
 					</View>
 					<View style={styles.LTContainer}>
-                        {this._renderImgBtn('taskList',this.images.list.source)}
+                        {
+                        	this.state.houseDataSource.map((roomId) => {
+                        		return this._renderLeftImgBtn(this.images.list.source,roomId)
+							})
+                        }
 					</View>
 					<View style={styles.RTContainer}>
-                        {this._renderImgBtn('message',this.images.message.source)}
-                        {this._renderImgBtn('setting',this.images.setting.source)}
+                        {this._renderRightImgBtn('message',this.images.message.source)}
+                        {this._renderRightImgBtn('setting',this.images.setting.source)}
 					</View>
 					<Animated.View style={[styles.recorderContainer,{right: this.state.rightDistance}]}>
 						{
@@ -178,9 +159,11 @@ export default class HomeScreen extends BaseComponent {
 		)
 	}
 
-	_getWarnMsg = () => {
+	_getWarnMsg = (mac) => {
+    	if(!mac) return;
+
 		this.request.sendGet({
-			url: global.service + this.apis.getAllWarnMsgByMac+`?macId=${this.mac}`,
+			url: global.service + this.apis.getAllWarnMsgByMac+`?macId=${mac}`,
 			success: (data) => {
                 if(data.code === 200){
                     let i = 0;
@@ -198,30 +181,56 @@ export default class HomeScreen extends BaseComponent {
                 	this.toast(data.message)
 				}
 			},
-			error: () => {
-
+			error: (err) => {
+				//this.toast('获取数据失败');
 			}
 		})
 	};
 
-	_getRoomWarnMsg = () => {
+	_getRoomWarnMsg = (roomId) => {
+		if(!roomId) return;
+
         this.request.sendGet({
-            url: global.service + this.apis.getAllWarnMsgByRoomId+`?roomId=${this.roomId}`,
+            url: global.service + this.apis.getAllWarnMsgByRoomId+`?roomId=${roomId}&pageIndex=${this.state.pageIndex}&pageSize=20`,
             success: (data) => {
             	if(data.code === 200){
                     this.setState({
-                        houseWarnRecordSource:data.message.alertHistories
+                        houseWarnRecordSource: this.state.houseWarnRecordSource.concat(data.message.alertHistories)
                     });
-                    this.listView && this.listView.endRefreshing(this.RefreshState.NoMoreData);
+                    if(data.message.isLastPage){
+                        this.listView && this.listView.endRefreshing(this.RefreshState.NoMoreData);
+					} else {
+                        this.listView && this.listView.endRefreshing(this.RefreshState.Success);
+					}
 				} else {
                     this.listView && this.listView.endRefreshing(this.RefreshState.Failure);
 				}
             },
             error: () => {
-
+                this.toast('获取数据失败');
+                this.listView && this.listView.endRefreshing(this.RefreshState.Failure);
             }
         })
 	};
+
+    _getWatchRoomByMac = (macId) => {
+    	if(!macId) return;
+
+        this.request.sendGet({
+            url: global.service + this.apis.getWatchRoomByMac+`?id=${macId}`,
+            success: (data) => {
+                if(data.code === 200){
+                    this.setState({
+                        houseDataSource:data.message
+                    });
+                } else {
+                }
+            },
+            error: () => {
+                this.toast('获取数据失败');
+            }
+        })
+	}
 
     _onRequestListWithReload = (isPullDownRefresh) => {
         if (isPullDownRefresh) {
@@ -230,12 +239,13 @@ export default class HomeScreen extends BaseComponent {
         } else {
             this.state.pageIndex++;
         }
-        this._getRoomWarnMsg();
+        this._getRoomWarnMsg(this.state.roomId);
     };
 
-	_startAnimation = () => {
+	_startAnimation = (roomId) => {
 		if(this.state.rightDistance._value > 0){
             this.state.rightDistance.setValue(-203);
+            roomId !== this.state.roomId && this._startAnimation(roomId);
 		} else {
             Animated.spring(                            // 随时间变化而执行的动画类型
                 this.state.rightDistance,                      // 动画中的变量值
@@ -243,6 +253,7 @@ export default class HomeScreen extends BaseComponent {
                     toValue: 3,
                 }
             ).start(() => {
+            	this.state.roomId = roomId;
                 this.listView && this.listView.startHeaderRefreshing();
 			});
 		}
@@ -257,24 +268,26 @@ export default class HomeScreen extends BaseComponent {
 		return Speech.speak(data);
 	};
 
-	_renderImgBtn = (btnType, source)=>{
-		return(
+	_renderLeftImgBtn = (source,roomId)=>{
+        return(
+			<MenuBtn
+				onPress={()=>this._startAnimation(roomId)}
+				imgSource={source}
+			/>
+        )
+    };
+
+    _renderRightImgBtn = (btnType, source)=>{
+        return(
 			<MenuBtn
 				onPress={()=>this._onImgBtnAction(btnType)}
 				imgSource={source}
 			/>
-		)
-	};
+        )
+    };
 
 	_onImgBtnAction =  (btnType) =>{
 		switch (btnType){
-			case 'taskList':{
-				// this.utils.removeStorageItem('service',() => {
-				// 	this.toast('移除成功')
-				// })
-                this._startAnimation();
-			}
-				break;
 			case 'setting':{
 				this.router.jumpToPage('setting');
 			}
@@ -305,7 +318,7 @@ export default class HomeScreen extends BaseComponent {
 				<View style={styles.warnMsgContainer}>
 					<Icon size={20} name="md-warning" color="#ff9800"/>
 					{/*<Image style={styles.warnIcon} {...this.images.i}/>*/}
-					<Text allowFontScaling={false} style={styles.warnMsg}>{data.item.content}</Text>
+					<Text allowFontScaling={false} numberOfLines={1} style={styles.warnMsg}>{data.item.content}</Text>
 				</View>
 			</TouchableOpacity>
 		)

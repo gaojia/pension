@@ -89,7 +89,7 @@ export default class Message extends BaseComponent {
 
     _onRequestListWithReload = (isPullDownRefresh) => {
         if (isPullDownRefresh) {
-            this.state.houseWarnRecordSource = [];
+            this.state.sectionSource = [];
             this.state.pageIndex = 1;
         } else {
             this.state.pageIndex++;
@@ -98,18 +98,25 @@ export default class Message extends BaseComponent {
 	};
 
     _getRoomWarnMsg = () => {
+    	if(!global.mac) return;
+
         this.request.sendGet({
-            url: global.service + this.apis.getAllMsgByMac+`?macId=${this.mac}`,
+            url: global.service + this.apis.getAllMsgByMac+`?macId=${global.mac}&pageIndex=${this.state.pageIndex}&pageSize=15`,
             success: (data) => {
                 if(data.code === 200){
                     this.setState({
-                        sectionSource: data.message.alertHistories
+                        sectionSource: this.state.sectionSource.concat(data.message.alertHistories) || []
                     });
-                    this.listView && this.listView.endRefreshing(this.RefreshState.NoMoreData);
+
+                    if(data.message.isLastPage)
+                        this.listView && this.listView.endRefreshing(this.RefreshState.NoMoreData);
+                    else
+                        this.listView && this.listView.endRefreshing(this.RefreshState.Success);
                 }
             },
-            error: () => {
-
+            error: (err) => {
+				//this.toast(err);
+                this.listView && this.listView.endRefreshing(this.RefreshState.Failure);
             }
         })
 	}

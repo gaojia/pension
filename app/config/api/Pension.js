@@ -9,7 +9,8 @@ import HostAPI from './HostApi';
 let pensionHost = '/api/pad-watch/';
 let PensionUrl = {
     getAllWarnMsgByMac: pensionHost + 'pad-all-room-trace',
-    getAllWarnMsgByRoomId: pensionHost + 'pad--room-trace',
+    getAllWarnMsgByRoomId: pensionHost + 'pad-room-trace',
+    getWatchRoomByMac: pensionHost + 'get-watched-room',
     getBuildingInfo: pensionHost + 'buildings',
     getUnitByBuildingId: pensionHost + 'units',
     getAllMsgByMac: pensionHost + 'pad-all-room-trace-history',
