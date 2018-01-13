@@ -10,7 +10,7 @@
     "harmony-reflect": "^1.5.1",
     "native-speech": "^0.1.0",
     "react": "16.0.0",
-    "react-native": "0.47.0",
+    "react-native": "^0.47.0",
     "react-native-device-info": "^0.13.0",
     "react-native-orientation": "^3.1.0",
     "react-native-picker": "^4.3.2",

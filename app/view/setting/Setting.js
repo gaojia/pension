@@ -64,6 +64,11 @@ export default class Setting extends BaseComponent {
 							haveMore={true}
 							imgStyle={{width:15,height:15}}
 						/>
+						<View style={{alignItems:'center',marginBottom:20,marginTop:20}}>
+							<Text style={{fontSize:StyleVariable.fontSize.small,color:StyleVariable.color.textTertiary}}>
+								本机MAC地址：{global.mac}
+							</Text>
+						</View>
 					</View>
 				</ScrollView>
 				<View style={{alignItems:'center',marginBottom:20,marginTop:20}}>
