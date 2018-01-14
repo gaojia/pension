@@ -1,6 +1,7 @@
 package com.pension;
 
 import android.app.Application;
+import android.view.WindowManager;
 
 import com.facebook.react.ReactApplication;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -20,6 +21,7 @@ import com.react.arron.speech.speechModulePackage;
 import com.github.yamill.orientation.OrientationPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.pension.commontools.RCTCommonToolsPackage;
+import com.pilloxa.backgroundjob.BackgroundJobPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -40,6 +42,7 @@ public class MainApplication extends Application implements ReactApplication {
             new PickerViewPackage(),
             new speechModulePackage(),
             new SpeechPackage(),
+            new BackgroundJobPackage(),
             new SplashScreenReactPackage(),
             new RCTCommonToolsPackage()
       );
@@ -60,5 +63,6 @@ public class MainApplication extends Application implements ReactApplication {
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
+
   }
 }

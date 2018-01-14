@@ -31,6 +31,7 @@ import Speech from 'native-speech';
 import { Recognizer, Synthesizer, SpeechConstant } from "react-native-speech-iflytek";
 import DeviceInfo from 'react-native-device-info';
 import SplashScreen from 'react-native-splash-screen'
+import BackgroundJob from 'react-native-background-job';
 
 export default class HomeScreen extends BaseComponent {
 	constructor(props) {
@@ -52,31 +53,51 @@ export default class HomeScreen extends BaseComponent {
 	componentDidMount() {
         SplashScreen.hide();
         InteractionManager.runAfterInteractions(() => {
+
+            BackgroundJob.register(this.backgroundJob);
+
             DeviceInfo.getMACAddress().then((mac) => {
             	global.mac = this.state.mac = mac;
                 this._getWatchRoomByMac(mac);
                 this._getWarnMsg(mac);
+
+                BackgroundJob.schedule({
+                    jobKey: "myJob",
+                    period: 1000,
+                    exact: true
+                });
             });
 
             Synthesizer.init('5a53520f');
             this.speakContentInterval = setInterval(() => {
-                // Speech.isSpeaking().then((reading) => {
-                // 	!reading && this._speakContent(this._getCurrentSpeakContent());
-                // }).catch((ex) => {
-                //    console.log(ex)
-                // })
 				this.onSpeak(this._getCurrentSpeakContent());
             }, 1000);
 
 			this.watchWarnMsg = setInterval(() => {
 				this._getWarnMsg(this.state.mac);
 			}, 1000);
-		});
 
-        // console.log('getDeviceId:'+DeviceInfo.getDeviceId())
-        // console.log('getDeviceName:'+DeviceInfo.getDeviceName())
-        // console.log('getUniqueID:'+DeviceInfo.getUniqueID())
+            // setTimeout(() => {
+            //     BackgroundJob.schedule({
+            //         jobKey: "myJob",
+            //         period: 1000,
+            //         exact: true
+            //     });
+			// }, 1000);
+		});
 	}
+
+    backgroundJob = {
+        jobKey: "myJob",
+        job: () => {
+        	// console.log('执行了')
+        	// this.toast('wowoow');
+            this._getWarnMsg(this.state.mac);
+            this.onSpeak(this._getCurrentSpeakContent());
+        	// this.speakContentInterval();
+        	// this.watchWarnMsg();
+		}
+    };
 
 	_getCurrentSpeakContent = () => {
         let cIndex = this.state.speakCurrentIndex;
@@ -100,9 +121,10 @@ export default class HomeScreen extends BaseComponent {
         !isSpeaking && Synthesizer.start(content);
     }
 
-	componentWillMount() {
+	componentWillUnmount() {
         clearInterval(this.speakContentInterval);
         clearInterval(this.watchWarnMsg);
+        BackgroundJob.cancelAll();
 	}
 
 	render() {
